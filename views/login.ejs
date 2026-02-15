@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - WhatsApp Web</title>
+    <!-- External CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+    <!-- ====================================
+         LOGIN PAGE
+         - User logs in with phone number & password
+         - Redirects to live chat on success
+         ==================================== -->
+    <div class="auth-wrapper">
+
+        <!-- Floating background shapes -->
+        <div class="bg-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+        </div>
+
+        <div class="auth-card">
+            <!-- Logo / Branding -->
+            <div class="auth-header">
+                <span class="auth-logo">💬</span>
+                <h2>Welcome Back</h2>
+                <p>Log in with your phone number to continue</p>
+            </div>
+
+            <!-- Show error message if login fails -->
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="auth-error">⚠️ <%= error %></div>
+            <% } %>
+
+            <!-- Show success message (e.g. after signup) -->
+            <% if (typeof success !== 'undefined' && success) { %>
+                <div class="auth-success">✅ <%= success %></div>
+            <% } %>
+
+            <!-- Login form - sends POST to /login -->
+            <form action="/login" method="POST" class="auth-form">
+
+                <!-- Phone Number -->
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">📱</span>
+                        <input type="tel" id="phone" name="phone" placeholder="+91 XXXXX XXXXX" required maxlength="15">
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                    </div>
+                </div>
+
+                <!-- Submit button -->
+                <button type="submit" class="auth-submit">Log In →</button>
+            </form>
+
+            <!-- Link to signup page -->
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="/signup">Sign up</a></p>
+                <a href="/" class="auth-back">← Back to home</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

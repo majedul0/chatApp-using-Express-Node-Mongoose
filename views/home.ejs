@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Web</title>
+    <!-- External CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+    <!-- ====================================
+         LANDING PAGE - Modern Home Screen
+         - Hero section with app branding
+         - Feature cards
+         - Login / Signup buttons
+         ==================================== -->
+    <div class="landing-wrapper">
+
+        <!-- ---- Floating background shapes for modern look ---- -->
+        <div class="bg-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+        </div>
+
+        <!-- ---- Navigation Bar ---- -->
+        <nav class="landing-nav">
+            <div class="nav-logo">
+                <span class="logo-icon">💬</span>
+                <span class="logo-text">WhatsApp<span class="logo-highlight">Web</span></span>
+            </div>
+            <div class="nav-links">
+                <a href="/login" class="nav-link">Login</a>
+                <a href="/signup" class="nav-btn">Sign Up Free</a>
+            </div>
+        </nav>
+
+        <!-- ---- Hero Section ---- -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    Chat with anyone,<br>
+                    <span class="highlight">anytime, anywhere.</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Real-time messaging powered by WebSockets. Connect instantly 
+                    with friends — no downloads needed. Just sign up with your phone number and start chatting.
+                </p>
+                <div class="hero-actions">
+                    <a href="/signup" class="btn btn-primary">Get Started →</a>
+                    <a href="/login" class="btn btn-secondary">I have an account</a>
+                </div>
+
+                <!-- Stats bar -->
+                <div class="stats-bar">
+                    <div class="stat">
+                        <span class="stat-number">⚡</span>
+                        <span class="stat-label">Real-time</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat">
+                        <span class="stat-number">🔒</span>
+                        <span class="stat-label">Secure</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat">
+                        <span class="stat-number">🌍</span>
+                        <span class="stat-label">Web Based</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phone mockup on right side -->
+            <div class="hero-mockup">
+                <div class="phone-frame">
+                    <div class="phone-notch"></div>
+                    <div class="phone-screen">
+                        <!-- Fake chat preview inside the phone -->
+                        <div class="mock-header">
+                            <div class="mock-avatar">A</div>
+                            <div>
+                                <div class="mock-name">Alice</div>
+                                <div class="mock-status">online</div>
+                            </div>
+                        </div>
+                        <div class="mock-messages">
+                            <div class="mock-bubble mock-received">Hey! How are you? 👋</div>
+                            <div class="mock-bubble mock-sent">I'm great! This app is amazing 🚀</div>
+                            <div class="mock-bubble mock-received">Right? Real-time messaging!</div>
+                            <div class="mock-bubble mock-sent">Let's chat more 💬</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ---- Features Section ---- -->
+        <section class="features">
+            <div class="feature-card">
+                <div class="feature-icon">💬</div>
+                <h3>Live Chat</h3>
+                <p>Send and receive messages instantly with real-time WebSocket technology</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>Phone Login</h3>
+                <p>Quick signup using your phone number — no email verification needed</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📋</div>
+                <h3>Chat History</h3>
+                <p>All messages are saved to the database so you never lose a conversation</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">👥</div>
+                <h3>Online Status</h3>
+                <p>See who's online and get typing indicators when someone is writing</p>
+            </div>
+        </section>
+
+        <!-- ---- Footer ---- -->
+        <footer class="landing-footer">
+            <p>Built with Node.js, Express, Socket.io & MongoDB</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>

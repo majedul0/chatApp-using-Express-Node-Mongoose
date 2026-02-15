@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - WhatsApp Web</title>
+    <!-- External CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+    <!-- ====================================
+         SIGNUP PAGE
+         - User registers with name, phone & password
+         - Phone number is the unique login ID
+         ==================================== -->
+    <div class="auth-wrapper">
+
+        <!-- Floating background shapes -->
+        <div class="bg-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+        </div>
+
+        <div class="auth-card">
+            <!-- Logo / Branding -->
+            <div class="auth-header">
+                <span class="auth-logo">💬</span>
+                <h2>Create Account</h2>
+                <p>Sign up with your phone number to start chatting</p>
+            </div>
+
+            <!-- Show error message if signup fails -->
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="auth-error">⚠️ <%= error %></div>
+            <% } %>
+
+            <!-- Signup form - sends POST to /signup -->
+            <form action="/signup" method="POST" class="auth-form">
+
+                <!-- Full Name -->
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">👤</span>
+                        <input type="text" id="name" name="name" placeholder="Enter your name" required maxlength="30">
+                    </div>
+                </div>
+
+                <!-- Phone Number -->
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">📱</span>
+                        <input type="tel" id="phone" name="phone" placeholder="+91 XXXXX XXXXX" required maxlength="15">
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" id="password" name="password" placeholder="Create a password" required minlength="4">
+                    </div>
+                </div>
+
+                <!-- Submit button -->
+                <button type="submit" class="auth-submit">Create Account →</button>
+            </form>
+
+            <!-- Link to login page -->
+            <div class="auth-footer">
+                <p>Already have an account? <a href="/login">Log in</a></p>
+                <a href="/" class="auth-back">← Back to home</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

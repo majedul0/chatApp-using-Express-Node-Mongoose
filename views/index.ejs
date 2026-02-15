@@ -1,22 +1,67 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Chats</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat History</title>
+    <!-- Link to external CSS file (served from public/css/) -->
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <h1>All Chats</h1>
-    <% if (chats.length > 0) { %>
-        <ul>
-            <% chats.forEach(chat => { %>
-                <li>
-                    <strong><%= chat.from %></strong> to <strong><%= chat.to %></strong>:
-                    <%= chat.msg %>
-                    <small>(<%= chat.create_at %>)</small>
-                </li>
-            <% }); %>
-        </ul>
-    <% } else { %>
-        <p>No chats available</p>
-    <% } %>
+
+    <!-- Main container for the chat history list -->
+    <div class="chat-list-container">
+
+        <!-- Header with title and message count -->
+        <div class="chat-list-header">
+            <h1>📋 Chat History</h1>
+            <% if (chats.length > 0) { %>
+                <!-- Badge showing total message count -->
+                <span class="msg-count-badge"><%= chats.length %> message<%= chats.length !== 1 ? 's' : '' %></span>
+            <% } %>
+        </div>
+
+        <!-- Scrollable list of all saved messages -->
+        <div class="chat-list-body">
+            <% if (chats.length > 0) { %>
+                <!-- Loop through each chat message from the database -->
+                <% chats.forEach(chat => { %>
+                    <div class="msg-card">
+                        <!-- From / To info -->
+                        <div class="msg-header">
+                            <span class="msg-from"><%= chat.from %></span>
+                            <span class="msg-to">→ <%= chat.to %></span>
+                        </div>
+                        <!-- Message content -->
+                        <div class="msg-text"><%= chat.msg %></div>
+                        <!-- Timestamp -->
+                        <div class="msg-time">
+                            <%= new Date(chat.create_at).toLocaleString('en-US', {
+                                hour: 'numeric',
+                                minute: '2-digit',
+                                hour12: true,
+                                month: 'short',
+                                day: 'numeric',
+                                year: 'numeric'
+                            }) %>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <!-- Empty state when no messages exist -->
+                <div class="empty-state">
+                    <div class="icon">💬</div>
+                    <p>No chats yet. Start a conversation!</p>
+                </div>
+            <% } %>
+        </div>
+
+        <!-- Footer with link to the live chat room -->
+        <div class="chat-list-footer">
+            <a href="/chat" class="join-chat-btn">💬 Join Live Chat</a>
+        </div>
+
+    </div>
+
 </body>
 </html>

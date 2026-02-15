@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Chat Room</title>
+    <!-- Link to our external CSS file in public/css -->
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+    <div class="chat-room-wrapper">
+        <div class="chat-room">
+
+            <!-- ====================================
+                 USERNAME SCREEN
+                 - Shown first so user can pick a name
+                 - Hidden after they join
+                 ==================================== -->
+            <div class="username-screen" id="usernameScreen">
+                <h2>💬 Join Chat</h2>
+                <p>Enter your name to start chatting.<br>Open this page in 2 tabs to simulate 2 users!</p>
+                <!-- If user came from login, their name is pre-filled via EJS -->
+                <input type="text" id="usernameInput" placeholder="Your name..." maxlength="20" autofocus
+                       value="<%= typeof username !== 'undefined' ? username : '' %>">
+                <button onclick="joinChat()">Join</button>
+            </div>
+
+            <!-- ====================================
+                 CHAT ROOM (hidden until user joins)
+                 ==================================== -->
+            <div id="chatRoom" style="display: none; flex-direction: column; height: 100%;">
+
+                <!-- Header with room name & online count -->
+                <div class="chat-room-header">
+                    <div class="room-avatar">💬</div>
+                    <div class="room-info">
+                        <h2>Live Chat Room</h2>
+                        <!-- Online count updates in real-time via socket.io -->
+                        <span class="online-status" id="onlineCount">0 online</span>
+                    </div>
+                    <!-- Link back to saved chat history -->
+                    <a href="/chats" class="back-link">📋 History</a>
+                </div>
+
+                <!-- Messages area - all chat bubbles go here -->
+                <div class="messages-area" id="messagesArea">
+                    <!-- Messages will be added here dynamically via JavaScript -->
+                </div>
+
+                <!-- Typing indicator - shows when other user is typing -->
+                <div class="typing-indicator" id="typingIndicator"></div>
+
+                <!-- Input area for composing and sending messages -->
+                <div class="input-area">
+                    <!-- Text input for the recipient's name -->
+                    <input type="text" id="toInput" placeholder="To..." style="max-width: 80px;">
+                    <!-- Text input for the message content -->
+                    <input type="text" id="msgInput" placeholder="Type a message..." autocomplete="off">
+                    <!-- Send button -->
+                    <button onclick="sendMessage()">➤</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ====================================
+         SOCKET.IO CLIENT LIBRARY
+         - Loaded from the server automatically
+         - socket.io serves this file at /socket.io/socket.io.js
+         ==================================== -->
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+        // ============================================
+        // CONNECT TO THE SERVER VIA WEBSOCKET
+        // ============================================
+        const socket = io();  // Connects to the same host that served this page
+
+        // Store the current user's name (set when they join)
+        let myUsername = '';
+
+        // Reference to DOM elements we'll use frequently
+        const messagesArea = document.getElementById('messagesArea');
+        const typingIndicator = document.getElementById('typingIndicator');
+        const msgInput = document.getElementById('msgInput');
+        let typingTimeout;  // Timer for "stop typing" detection
+
+        // ============================================
+        // JOIN CHAT
+        // - Called when user clicks "Join" button
+        // - Hides the username screen, shows the chat room
+        // - Sends "join" event to server
+        // ============================================
+        function joinChat() {
+            const input = document.getElementById('usernameInput');
+            const name = input.value.trim();
+
+            // Don't allow empty names
+            if (!name) return;
+
+            myUsername = name;
+
+            // Hide the username screen, show the chat room
+            document.getElementById('usernameScreen').style.display = 'none';
+            document.getElementById('chatRoom').style.display = 'flex';
+
+            // Tell the server this user has joined
+            socket.emit('join', myUsername);
+
+            // Focus on the message input so user can start typing immediately
+            msgInput.focus();
+        }
+
+        // Allow pressing Enter to join (instead of clicking the button)
+        document.getElementById('usernameInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') joinChat();
+        });
+
+        // AUTO-JOIN: If user came from login page, join automatically
+        // The username is pre-filled by the server via EJS template
+        const prefilled = document.getElementById('usernameInput').value.trim();
+        if (prefilled) {
+            joinChat();  // Skip the username screen entirely
+        }
+
+        // ============================================
+        // SEND MESSAGE
+        // - Called when user clicks send or presses Enter
+        // - Sends the message data to the server
+        // ============================================
+        function sendMessage() {
+            const toInput = document.getElementById('toInput');
+            const msg = msgInput.value.trim();
+            const to = toInput.value.trim() || 'everyone';  // Default recipient
+
+            // Don't send empty messages
+            if (!msg) return;
+
+            // Send the message to the server via socket
+            // Server will save it to DB and broadcast to all users
+            socket.emit('send-message', { to, msg });
+
+            // Tell server we stopped typing
+            socket.emit('stop-typing');
+
+            // Clear the input field for the next message
+            msgInput.value = '';
+        }
+
+        // Allow pressing Enter to send a message
+        msgInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        // ============================================
+        // TYPING INDICATOR
+        // - Sends "typing" event when user types
+        // - Sends "stop-typing" after 1 second of no typing
+        // ============================================
+        msgInput.addEventListener('input', () => {
+            socket.emit('typing');
+
+            // Clear any existing timeout
+            clearTimeout(typingTimeout);
+
+            // After 1 second of no typing, tell server we stopped
+            typingTimeout = setTimeout(() => {
+                socket.emit('stop-typing');
+            }, 1000);
+        });
+
+        // ============================================
+        // SOCKET EVENT LISTENERS
+        // - These fire when the SERVER sends events to us
+        // ============================================
+
+        // --- Someone sent a message ---
+        socket.on('receive-message', (data) => {
+            // data = { from, to, msg, time }
+            const isMine = data.from === myUsername;  // Did I send this?
+
+            // Create a chat bubble element
+            const bubble = document.createElement('div');
+            bubble.className = `bubble ${isMine ? 'sent' : 'received'}`;
+            bubble.innerHTML = `
+                ${!isMine ? `<div class="bubble-sender">${data.from}</div>` : ''}
+                <div class="bubble-text">${escapeHtml(data.msg)}</div>
+                <div class="bubble-time">${isMine ? 'You' : data.from} → ${data.to} · ${data.time}</div>
+            `;
+
+            // Add the bubble to the messages area
+            messagesArea.appendChild(bubble);
+
+            // Auto-scroll to the bottom so newest messages are visible
+            messagesArea.scrollTop = messagesArea.scrollHeight;
+        });
+
+        // --- A user joined the chat ---
+        socket.on('user-joined', (data) => {
+            // Show a system message
+            addSystemMessage(`${data.username} joined the chat`);
+            // Update online count in the header
+            document.getElementById('onlineCount').textContent = `${data.onlineCount} online`;
+        });
+
+        // --- A user left the chat ---
+        socket.on('user-left', (data) => {
+            addSystemMessage(`${data.username} left the chat`);
+            document.getElementById('onlineCount').textContent = `${data.onlineCount} online`;
+        });
+
+        // --- Someone is typing ---
+        socket.on('user-typing', (username) => {
+            typingIndicator.textContent = `${username} is typing...`;
+        });
+
+        // --- Someone stopped typing ---
+        socket.on('user-stop-typing', () => {
+            typingIndicator.textContent = '';
+        });
+
+        // ============================================
+        // HELPER FUNCTIONS
+        // ============================================
+
+        // Add a centered system message (e.g., "Alice joined the chat")
+        function addSystemMessage(text) {
+            const div = document.createElement('div');
+            div.className = 'system-msg';
+            div.textContent = text;
+            messagesArea.appendChild(div);
+            messagesArea.scrollTop = messagesArea.scrollHeight;
+        }
+
+        // Escape HTML to prevent XSS attacks
+        // (e.g., if someone types <script> in the chat)
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>
