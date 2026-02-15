@@ -51,7 +51,7 @@ A real-time chat application built with **Node.js**, **Express**, **Socket.io**,
 
 1. **Clone the repository**
    ```bash
-   git clone <your-repo-url>
+   git clone https://github.com/majedul0/chatApp-using-Express-Node-Mongoose.git
    cd Mongoose
    ```
 
