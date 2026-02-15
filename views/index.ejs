@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chats</title>
+</head>
+<body>
+    <h1>All Chats</h1>
+    <% if (chats.length > 0) { %>
+        <ul>
+            <% chats.forEach(chat => { %>
+                <li>
+                    <strong><%= chat.from %></strong> to <strong><%= chat.to %></strong>:
+                    <%= chat.msg %>
+                    <small>(<%= chat.create_at %>)</small>
+                </li>
+            <% }); %>
+        </ul>
+    <% } else { %>
+        <p>No chats available</p>
+    <% } %>
+</body>
+</html>
